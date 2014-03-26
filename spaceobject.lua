@@ -1,5 +1,5 @@
-local class = require "middleclass"
-local vector = require "hump.vector"
+local class = require 'middleclass'
+local vector = require 'hump.vector'
 
 SpaceObject = class('SpaceObject')
 
@@ -13,7 +13,7 @@ function SpaceObject:initialize(objectName, img, position, velocity, rotation, d
     --Use hump's vector library for velocity
     self.velocity = velocity or vector(0, 0)
     
-    self.drift = drift or 1
+    self.driftFactor = driftFactor or 1
 end
 
 --TODO: change velocity vectors after rotation
@@ -28,29 +28,28 @@ function SpaceObject:rotate(direction)
 end
 
 function SpaceObject:move(direction, dt)
+    self.velocity = vector(5, 5)
     velX, velY = self.velocity:unpack()
     x, y = self.position.x, self.position.y
     if direction == "fwd" then
-        self.position = {
-            x = dt * (x + velX * math.cos(math.rad(90 - self.rotation))),
-            y = dt * (y - velY * math.sin(math.rad(90 - self.rotation)))
-        }
+        self.position.x = (x + velX * math.sin(math.rad(self.rotation)))
+        self.position.y = (y - velY * math.cos(math.rad(self.rotation)))
     elseif direction == "bwd" then
-        self.position = {
-            x = dt * (x - velX * math.cos(math.rad(90 - self.rotation))),
-            y = dt * (y + velY * math.sin(math.rad(90 - self.rotation)))
-        }
+        self.position.x = (x - velX * math.sin(math.rad(self.rotation)))
+        self.position.y = (y + velY * math.cos(math.rad(self.rotation)))
     else 
-        drift(dt)
+        self.drift(dt)
     end
     --multiple dt by velocity to get total movement per unit of dt time
 end
 
-function drift(dt)
+function SpaceObject:drift(dt)
+    return 5
 end
 
 
 function SpaceObject:collide(collection)
 
 end
+
 

@@ -4,21 +4,22 @@
 --
 ]]--
 
-local ship = {}
-local asteroid = {}
-local enemies = {}
+local class = require "middleclass"
+local SO = require "spaceobject"
+
+--subclassing
+local Ship = class('Ship', SpaceObject)
+
+--Layer1 should move twice as fast as Layer2
+local starsLayer1 = {}
+local starsLayer2 = {}
 
 function love.load()
-    --TODO: put this all in ship.lua file later
-    ship.img = love.graphics.newImage("ship.png")
-    ship.theta = 0
-    ship.x, ship.y = 100, 100
-    ship.width, ship.height = ship.img:getWidth(), ship.img:getHeight()
-    ship.speed = 10
-    ship.drift = 0.5
+    shipImg = love.graphics.newImage("ship.png")
+    ship = Ship:new('hero', shipImg, {x=100, y=100}, nil, nil, 0.5)
 
-    --TODO: make this have components of ship...inherit from ship?
-    asteroid.img = love.graphics.newImage("enemy.png")
+    --TODO: way to do this get off 
+    shipWd, shipHt = shipImg:getWidth(), shipImg:getHeight()
 
     love.window.setMode(640, 480)
 end
@@ -31,22 +32,21 @@ function love.draw()
     debug()
 
     --offset origin to image's center
-    love.graphics.draw(ship.img, ship.x, ship.y, math.rad(ship.theta), nil, nil, ship.width/2, ship.height/2)
+    love.graphics.draw(ship.img, ship.position.x, ship.position.y, math.rad(ship.rotation), nil, nil, shipWd/2, shipHt/2)
 end
 
 function love.update(dt)
     --love2D is CW positive for some reason...
     if love.keyboard.isDown("a") then
-        ship.theta = (ship.theta - 10) % 360
+        ship:rotate("ccw")
     elseif love.keyboard.isDown("d") then
-        ship.theta = (ship.theta + 10) % 360
+        ship:rotate("cw")
     elseif love.keyboard.isDown("w") then
-        ship.x = ship.x + ship.speed * math.cos(math.rad(90 - ship.theta))
-        ship.y = ship.y - ship.speed * math.sin(math.rad(90 - ship.theta))
+        ship:move("fwd", dt)
     elseif love.keyboard.isDown("s") then
-        ship.x = ship.x - ship.speed * math.cos(math.rad(90 - ship.theta))
-        ship.y = ship.y + ship.speed * math.sin(math.rad(90 - ship.theta))
+        ship:move("bwd", dt)
     else
+        ship:drift(dt)
         --microdrift
         --ship.x, ship.y = drift(ship.x, ship.y)
     end
@@ -62,33 +62,7 @@ function love.mousepressed(x, y, button)
 
 end
 
-function drift(x, y) 
-    --TODO: vectorize physics before actually implementing drift
-    --ugh this code is stupid. refactor later
-
-    --[[
-    if ship.theta < 180 then a = -1 elseif 
-        ship.theta > 180 then a = 1 else a = 0 end
-
-    if ship.theta < 90 or ship.theta > 270 then b = -1 elseif 
-        ship.theta > 90 or ship.theta < 270 then b = 1
-        ]]--
-
-
-    --return x + a * ship.drift, y + b * ship.drift
-    --Something like: ship.velocity = ship.velocity + vector(0.05, 0.05)
-end
-
-function asteroidGen(seed)
-    
-end
-
 function debug()
-    love.graphics.print("ship angle: " .. ship.theta, 0, 50)
-    love.graphics.print("ship x: " .. ship.x .. " ship y: " .. ship.y, 0, 75)
-    --[[
-    love.graphics.print(math.cos(math.rad(90 - ship.theta)), 0, 25)
-    love.graphics.print(math.sin(math.rad(90 - ship.theta)), 0, 50)
-    ]]--
+    love.graphics.print(ship.rotation .. " " .. ship.position.x .. " " ..  " " .. ship.position.y, 300, 75)
 end
 
