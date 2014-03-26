@@ -33,22 +33,9 @@ Themes
 ======
 Space Opera
 SPaZ-like combat, but not so grindy, more diverse enemies
-Cortana AI/Master Chief dynamic
-    To the Moon-like feelings
 Marathon Terminals
 
 Graphics
 ========
 Open art and squares and solid colors to start
 
-Story
-=====
-ACT I:
-YOU are a bounty hunter/space traveller, minding your own business, doing some side quests
-
-ACT II:
-Distress signal comes from some moon far away on the other side of the galaxy. For some reason,
-you fly towards it. You find the distress signal
-
-ACT III:
-It wasn't a person, it was an AI... Dunno where story will go from here.
